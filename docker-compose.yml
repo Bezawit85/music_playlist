@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: musical-backend-dev
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - MONGO_URI=${MONGO_URI}
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - musical-network
+    command: npm run dev
+
+  frontend:
+    build:
+      context: ./frontend
+      target: builder
+    container_name: musical-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "3000:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - musical-network
+    command: npm run dev -- --host
+
+networks:
+  musical-network:
+    driver: bridge
