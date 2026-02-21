@@ -1,10 +1,30 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@theme {
+  --font-sans: "Montserrat", sans-serif;
+  --font-header: "Roboto", sans-serif;
 
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --color-primary: #2e3b4d;
+  --color-secondary: #d10000;
+  --color-slate-950: #1a232e; /* Adjusting dark background to match primary palette */
+}
+
+@layer base {
+  body {
+    @apply bg-primary text-slate-200 antialiased font-sans;
+    background-image: radial-gradient(
+      circle at 50% -20%,
+      #2e3b4d 0%,
+      #1a232e 100%
+    );
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-header;
+  }
 }

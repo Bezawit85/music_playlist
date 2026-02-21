@@ -4,18 +4,19 @@ import {
   getSongsSuccess,
   getSongsFailure,
   getSongsFetch,
+  getStatsSuccess,
+  getStatsFailure,
+  getStatsFetch,
   createSongFetch,
   updateSongFetch,
   deleteSongFetch,
 } from "./songsSlice";
-import type { Song } from "../types";
+import type { Song, SongStats } from "../types";
 import { API_ENDPOINTS } from "../config/api";
 
 function* workGetSongsFetch() {
   try {
-    const response: Response = yield call(() =>
-      fetch(API_ENDPOINTS.songs)
-    );
+    const response: Response = yield call(() => fetch(API_ENDPOINTS.songs));
     const data: Song[] = yield response.json();
     yield put(getSongsSuccess(data));
   } catch (_error) {
@@ -23,16 +24,32 @@ function* workGetSongsFetch() {
   }
 }
 
-function* workCreateSongFetch(action: { type: string; payload: Omit<Song, "_id"> }) {
+function* workGetStatsFetch() {
+  try {
+    const response: Response = yield call(() =>
+      fetch(API_ENDPOINTS.statistics),
+    );
+    const data: SongStats = yield response.json();
+    yield put(getStatsSuccess(data));
+  } catch (_error) {
+    yield put(getStatsFailure());
+  }
+}
+
+function* workCreateSongFetch(action: {
+  type: string;
+  payload: Omit<Song, "_id">;
+}) {
   try {
     yield call(() =>
       fetch(API_ENDPOINTS.songs, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(action.payload),
-      })
+      }),
     );
     yield put(getSongsFetch());
+    yield put(getStatsFetch());
   } catch (_error) {
     console.error("Create failed", _error);
   }
@@ -49,9 +66,10 @@ function* workUpdateSongFetch(action: {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      })
+      }),
     );
     yield put(getSongsFetch());
+    yield put(getStatsFetch());
   } catch (_error) {
     console.error("Update failed", _error);
   }
@@ -63,9 +81,10 @@ function* workDeleteSongFetch(action: { type: string; payload: string }) {
     yield call(() =>
       fetch(`${API_ENDPOINTS.songs}/${id}`, {
         method: "DELETE",
-      })
+      }),
     );
     yield put(getSongsFetch());
+    yield put(getStatsFetch());
   } catch (_error) {
     console.error("Delete failed", _error);
   }
@@ -76,6 +95,7 @@ function* songsSaga() {
   yield takeEvery(updateSongFetch.type, workUpdateSongFetch);
   yield takeEvery(deleteSongFetch.type, workDeleteSongFetch);
   yield takeEvery(getSongsFetch.type, workGetSongsFetch);
+  yield takeEvery(getStatsFetch.type, workGetStatsFetch);
 }
 
 export default songsSaga;

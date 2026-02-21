@@ -1,14 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { Song } from "../types";
+import type { Song, SongStats } from "../types";
 
 interface SongsState {
   songs: Song[];
+  stats: SongStats | null;
   isLoading: boolean;
 }
 
 const initialState: SongsState = {
   songs: [],
+  stats: null,
   isLoading: false,
 };
 
@@ -27,10 +29,21 @@ export const songsSlice = createSlice({
       state.isLoading = false;
     },
 
+    getStatsFetch: (state) => {
+      state.isLoading = true;
+    },
+    getStatsSuccess: (state, action: PayloadAction<SongStats>) => {
+      state.stats = action.payload;
+      state.isLoading = false;
+    },
+    getStatsFailure: (state) => {
+      state.isLoading = false;
+    },
+
     createSongFetch: (_state, _action: PayloadAction<Omit<Song, "_id">>) => {},
     updateSongFetch: (
       _state,
-      _action: PayloadAction<{ id: string; data: Partial<Song> }>
+      _action: PayloadAction<{ id: string; data: Partial<Song> }>,
     ) => {},
     deleteSongFetch: (_state, _action: PayloadAction<string>) => {},
   },
@@ -40,6 +53,9 @@ export const {
   getSongsFetch,
   getSongsSuccess,
   getSongsFailure,
+  getStatsFetch,
+  getStatsSuccess,
+  getStatsFailure,
   createSongFetch,
   updateSongFetch,
   deleteSongFetch,

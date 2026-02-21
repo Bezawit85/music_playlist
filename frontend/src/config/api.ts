@@ -4,5 +4,5 @@ export const API_BASE_URL =
 
 export const API_ENDPOINTS = {
   songs: `${API_BASE_URL}/api/songs`,
-  statistics: `${API_BASE_URL}/api/songs/statistics`,
+  statistics: `${API_BASE_URL}/api/songs/stats/all`,
 };
