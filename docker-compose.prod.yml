@@ -19,22 +19,6 @@ services:
     networks:
       - musical-network
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      target: production
-    container_name: musical-frontend
-    restart: unless-stopped
-    ports:
-      - "3000:80"
-    depends_on:
-      - backend
-    networks:
-      - musical-network
-    environment:
-      - VITE_API_URL=http://localhost:5000
-
 networks:
   musical-network:
     driver: bridge
